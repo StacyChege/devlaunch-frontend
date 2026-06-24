@@ -1,14 +1,9 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
+import LoginPage from './pages/Auth/LoginPage';
 
-// Temporary Mock Components for Testing Visuals
-const LoginMock = () => (
-  <div className="p-8 bg-slate-800 text-white min-h-screen flex flex-col items-center justify-center">
-    <h1 className="text-3xl font-bold mb-4">Login Page</h1>
-    <p className="text-slate-400">Public Gate — Anyone can see this.</p>
-  </div>
-);
+
 
 const DashboardMock = () => (
   <div className="p-8 bg-slate-900 text-white min-h-screen">
@@ -29,7 +24,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-        <Route path="/login" element={<LoginMock />} />
+        <Route path="/login" element={<LoginPage />} />
 
         {/* Standard Protected Route */}
         <Route 
