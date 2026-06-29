@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
 import { User, Mail, Lock, AlertCircle, CheckCircle, Terminal } from 'lucide-react';
+// import { useAuth } from '../../hooks/useAuth';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  // const { register } = useAuth();
 
   // Access incoming background navigation memory payload (if any) to pre-fill the form fields
   const location = useLocation();
@@ -55,21 +55,24 @@ export default function RegisterPage() {
     setApiError('');
     setFieldErrors({});
 
+    // Run local input checks
     if (!validateForm()) return;
 
     setIsLoading(true);
 
     try {
-      await register(fullName, email, password);
+      // await register(fullName, email, password);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setSuccessToast(true);
       setFullName('');
       setEmail('');
       setPassword('');
       setConfirmPassword('');
 
-      setTimeout(() => {
-        navigate('/login');
-      }, 4000);
+      navigate('/dashboardlayout/dashboard');
+      
     } catch (error) {
       console.error('Registration processing error:', error);
       setApiError(error.response?.data?.detail || error.message || 'Registration failed. Please try again.');

@@ -41,7 +41,7 @@ export default function LoginPage() {
         setIsLoading(true);
         try {
             await login(email, password);
-            navigate('/dashboard'); 
+            navigate('/dashboardlayout/dashboard'); 
         } catch (error) {
             const message = error.response?.data?.error || 'Login failed. Please try again.';
             setApiError(message);
