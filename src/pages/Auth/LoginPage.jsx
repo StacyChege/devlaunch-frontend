@@ -7,7 +7,7 @@ export default function LoginPage() {
     const navigate = useNavigate();
 
     // Form State Management
-    const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState(null);
