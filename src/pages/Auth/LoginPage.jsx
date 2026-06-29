@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link }  from "react-router-dom";
+import { useNavigate }  from "react-router-dom";
 import  useAuth  from "../../hooks/useAuth";
 
 export default function LoginPage() {
@@ -7,13 +7,11 @@ export default function LoginPage() {
     const navigate = useNavigate();
 
     // Form State Management
-    const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [errors, setErrors] = useState({});
-    const [apiError, setApiError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
     
     //Client-Side Validation Logic
     const validateForm = () => {
@@ -58,24 +56,10 @@ export default function LoginPage() {
 
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">DevLaunch</h1>
-          <p className="text-gray-500 mt-2">Create your account</p>
+          <p className="text-gray-500 mt-2">Login to your account</p>
         </div>
 
         <form onSubmit={handleSubmit} noValidate>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-            <input
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Jane Doe"
-              className={`w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.fullName ? 'border-red-400' : 'border-gray-300'
-              }`}
-            />
-            {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>}
-          </div>
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -105,19 +89,7 @@ export default function LoginPage() {
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
 
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="••••••••"
-              className={`w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.confirmPassword ? 'border-red-400' : 'border-gray-300'
-              }`}
-            />
-            {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
-          </div>
+          
 
           {apiError && (
             <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
@@ -136,18 +108,24 @@ export default function LoginPage() {
                 Creating account...
               </>
             ) : (
-              'Create Account'
+              'Login Account'
             )}
           </button>
 
         </form>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
-          Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 hover:underline font-medium">
-            Sign in
-          </Link>
-        </p>
+        <div className="mt-6 text-center">
+  <p className="text-sm text-slate-500">
+    Don't have an account?{' '}
+    <button
+      type="button" 
+      onClick={() => navigate('/register', { state: { prefilledEmail: email, prefilledPassword: password } })}
+      className="text-blue-400 hover:text-blue-300 transition-colors font-medium ml-1 focus:outline-none"
+    >
+      Create an account
+    </button>
+  </p>
+</div>
 
       </div>
     </div>

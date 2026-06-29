@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { User, Mail, Lock, AlertCircle, CheckCircle, Terminal } from 'lucide-react';
 
@@ -7,10 +7,18 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const { register } = useAuth();
 
+  // Access incoming background navigation memory payload (if any) to pre-fill the form fields
+  const location = useLocation();
+
+  // Extract pre-filled credentials safely 
+  const incomingEmail = location.state?.prefilledEmail || '';
+  const incomingPassword = location.state?.prefilledPassword || '';
+
+
   const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState(incomingEmail);
+  const [password, setPassword] = useState(incomingPassword);
+  const [confirmPassword, setConfirmPassword] = useState(incomingPassword);
   const [fieldErrors, setFieldErrors] = useState({});
   const [apiError, setApiError] = useState('');
   const [successToast, setSuccessToast] = useState(false);
