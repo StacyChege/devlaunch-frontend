@@ -14,14 +14,14 @@ export default function DashboardLayout() {
   // State control for mobile hamburger slide-out menu drawer
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  // Structural mapping dictionary array for generating navigation link matrices dynamically
+  // Structural mapping dictionary array updated with the true router prefix keys:
   const navigationLinks = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, adminOnly: false },
-    { name: 'Templates', path: '/templates-dashboard', icon: FileCode, adminOnly: false },
-    { name: 'My Projects', path: '/projects', icon: FolderGit2, adminOnly: false },
-    { name: 'Billing', path: '/billing', icon: CreditCard, adminOnly: false },
-    { name: 'Settings', path: '/settings', icon: Settings, adminOnly: false },
-    { name: 'Admin Command', path: '/admin', icon: ShieldCheck, adminOnly: true },
+    { name: 'Dashboard', path: '/dashboardlayout/dashboard', icon: LayoutDashboard, adminOnly: false },
+    { name: 'Templates', path: '/dashboardlayout/templates-dashboard', icon: FileCode, adminOnly: false },
+    { name: 'My Projects', path: '/dashboardlayout/projects', icon: FolderGit2, adminOnly: false },
+    { name: 'Billing', path: '/dashboardlayout/billing', icon: CreditCard, adminOnly: false },
+    { name: 'Settings', path: '/dashboardlayout/settings', icon: Settings, adminOnly: false },
+    { name: 'Admin Command', path: '/admin-layout/admin', icon: ShieldCheck, adminOnly: true },
   ];
 
   // Dynamically extract and compute the current header title depending on matching route path location strings
@@ -57,6 +57,17 @@ export default function DashboardLayout() {
       );
     });
   };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-400">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-500/30 border-t-blue-500 mb-4"></div>
+        <p className="text-sm font-medium tracking-wide">Initializing secure workspace console...</p>
+      </div>
+    );
+  }
+
+  
 
   return (
     <div className="min-h-screen bg-slate-50 flex text-slate-800">

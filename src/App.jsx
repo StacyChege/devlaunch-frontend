@@ -5,10 +5,10 @@ import DashboardLayout from './components/Layout/DashboardLayout';
 // Authentic Page Component Imports
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
+import TemplatesPage from './pages/Templates/TemplatesPage'; // 💡 Double check spelling here: 'TemplatesPage' vs 'TemplatesPages'
 
 // Simple Route Mock Stand-in Elements for Blueprint Navigation Map testing
 const LandingMock = () => <div className="p-8 text-slate-800 font-semibold text-xl">Public Landing Page Website Home view portal</div>;
-const PublicGalleryMock = () => <div className="p-8 text-slate-800 font-semibold text-xl">Public Templates Explorer Catalog Browsing view panel</div>;
 const DashboardMock = () => <div className="p-8 text-slate-800 font-semibold text-xl text-blue-600 font-bold">Main Dashboard Center Feed</div>;
 const ProjectsListMock = () => <div className="p-8 text-slate-800 font-semibold text-xl">My App Projects list control dashboard views</div>;
 const BillingPortalMock = () => <div className="p-8 text-slate-800 font-semibold text-xl">Subscription Pricing Tier Plans Payment Accounts billing configuration dashboard</div>;
@@ -33,7 +33,7 @@ export default function App() {
         <Route path="/" element={<LandingMock />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/templates-gallery" element={<PublicGalleryMock />} />
+        {/* Cleaned up: Removed the loose public templates path from here */}
 
         {/* =========================================================
             2. PROTECTED NESTED PORTAL ROUTE
@@ -48,7 +48,10 @@ export default function App() {
         >
           {/* Relative child paths (NO leading slashes) */}
           <Route path="dashboard" element={<DashboardMock />} />
-          <Route path="templates-dashboard" element={<PublicGalleryMock />} />
+          
+          {/* Connected perfectly inside the DashboardLayout frame ✅ */}
+          <Route path="templates-dashboard" element={<TemplatesPage />} />
+          
           <Route path="projects" element={<ProjectsListMock />} />
           <Route path="billing" element={<BillingPortalMock />} />
           <Route path="settings" element={<AccountSettingsMock />} />
@@ -65,7 +68,6 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          {/* Fixed nested path: removed leading slash to prevent router breakdown */}
           <Route path="admin" element={<AdminGatewayConsoleMock />} />
         </Route>
 
