@@ -64,7 +64,7 @@ function StatusBadge({ status }) {
   );
 }
 
-export function DashboardPage() {
+export default function DashboardPage() {
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);

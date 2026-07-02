@@ -1,5 +1,5 @@
 import axiosInstance from './axiosInstance';
 
-export const getProjects = async () => {
+export const getProjectStats = async () => {
     return axiosInstance.get('/projects/stats/')
 }
