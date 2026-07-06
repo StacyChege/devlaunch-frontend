@@ -8,6 +8,7 @@ import RegisterPage from './pages/Auth/RegisterPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import PlaceholderPage from './pages/Placeholder';
 import NotFoundPage from './pages/NotFoundPage';
+import TemplatesPage  from './pages/Templates/TemplatesPage';
 // Simple Route Mock Stand-in Elements for Blueprint Navigation Map testing
 
 
@@ -40,13 +41,13 @@ export default function App() {
         />
 
         <Route
-          path="/templates"
-          element={
-            <ProtectedLayout>
-              <PlaceholderPage title="Template Gallery" />
-            </ProtectedLayout>
-          }
-        />
+  path="/templates"
+  element={
+    <ProtectedLayout>
+      <TemplatesPage />
+    </ProtectedLayout>
+  }
+/>
 
         <Route
           path="/projects"

@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance';
 
-export const getTemplates = async () => {
-    const response = await axiosInstance.get('/templates/');
-    return response.data;
-};
+export const getTemplates = (category) => {
+    const params = category && category !== 'All' ? { category } : {};
+    return axiosInstance.get('/templates/', { params });
+}; // Fetches the collection index of all available templates, optionally filtered by category.
