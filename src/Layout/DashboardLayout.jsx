@@ -5,7 +5,7 @@ import { DeployModal } from '../components/DeployModal';
 
 // Shell layout for all authenticated pages — handles the sidebar,
 // topbar, and deploy modal in one place so pages stay focused on content
-export function DashboardLayout({ children }) {
+export default function DashboardLayout({ children }) {
   // Controls the mobile sidebar drawer open/close state
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
