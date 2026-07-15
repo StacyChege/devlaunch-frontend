@@ -1,13 +1,30 @@
 import axiosInstance from './axiosInstance';
 
-export const getProjectStats = async () => // Fetches the collection index of all existing workplaces belonging to the authenticated user.
-     axiosInstance.get('/projects/stats/');
+export const getProjectStats = () =>
+  axiosInstance.get('/projects/stats/');
 
-export const getProjects = async () =>  // Fetches the collection index of all existing workplaces belonging to the authenticated user.
-        axiosInstance.get('/projects/');
+export const getProjects = () =>
+  axiosInstance.get('/projects/');
 
-export const createProject = (templateId) => // Creates a new workplace based on the provided template ID.
-    axiosInstance.post('/projects/', { template_id: templateId });
+// template_id tells the backend which template to clone for the new project
+export const createProject = (templateId) =>
+  axiosInstance.post('/projects/', { template_id: templateId });
 
-export const getProject = (projectId) => // Fetches the details of a specific workplace based on the provided project ID.
-    axiosInstance.get(`/projects/${projectId}/`);
+export const getProject = (id) =>
+  axiosInstance.get(`/projects/${id}/`);
+
+// PATCH sends only the changed fields — the backend merges them
+export const updateProject = (id, data) =>
+  axiosInstance.patch(`/projects/${id}/`, data);
+
+export const deleteProject = (id) =>
+  axiosInstance.delete(`/projects/${id}/`);
+
+// Logo upload uses FormData because files cannot be sent as JSON
+export const uploadProjectLogo = (id, file) => {
+  const formData = new FormData();
+  formData.append('logo', file);
+  return axiosInstance.post(`/projects/${id}/logo/`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
