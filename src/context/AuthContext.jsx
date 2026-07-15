@@ -1,120 +1,93 @@
-import { useState, useEffect } from 'react';
-import { AuthContext } from './AuthContextInstance'; 
-import axiosInstance from '../api/axiosInstance';
-import axios from 'axios';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useState, useEffect } from 'react';
+import { loginUser, registerUser, fetchMe } from '../api/auth';
+
+// Central auth context — wraps the whole app so any component can
+// access the logged-in user without passing props down manually
+export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  // Global State Variables
   const [user, setUser] = useState(null);
-  const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
+  const [accessToken, setAccessToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Starts true so ProtectedRoute waits for the token check before
+  // deciding to redirect. Prevents logged-in users being kicked to /login on refresh
   const [isLoading, setIsLoading] = useState(true);
 
-  // Re-hydrate User Session on Page Mount / Refresh
+  // Runs once on app load — checks if a token is already saved in the
+  // browser and verifies it with the backend before rendering any pages
   useEffect(() => {
-    const initializeAuth = async () => {
-      const token = localStorage.getItem('accessToken');
-      
-      if (!token) {
+    const rehydrate = async () => {
+      const storedToken = localStorage.getItem('accessToken');
+
+      // No token saved means the user has never logged in or already logged out
+      if (!storedToken) {
         setIsLoading(false);
         return;
       }
 
       try {
-        const response = await axiosInstance.get('/auth/me/');
-        setUser(response.data.user); 
+        // Verify the stored token is still valid by calling /auth/me/
+        // The Axios interceptor attaches the token automatically
+        const response = await fetchMe();
+        setUser(response.data);
+        setAccessToken(storedToken);
         setIsAuthenticated(true);
-      } catch (error) {
-        console.error("Session restoration failed:", error);
+      } catch {
+        // Token is expired or invalid — clear everything and start fresh
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        setAccessToken(null);
-        setUser(null);
-        setIsAuthenticated(false);
       } finally {
+        // Always set loading to false when the check is done, success or fail
         setIsLoading(false);
       }
     };
 
-    initializeAuth();
+    rehydrate();
   }, []);
 
-  // Native Auth Actions Exposed to Subcomponents
+  // Called from LoginPage — saves tokens to localStorage so they
+  // survive a page refresh, then updates the context state
   const login = async (email, password) => {
-    setIsLoading(true);
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/login/`, {
-        email,
-        password,
-      });
+    const response = await loginUser(email, password);
+    const { user, access, refresh } = response.data;
 
-      const { access, refresh, user: userData } = response.data;
+    localStorage.setItem('accessToken', access);
+    localStorage.setItem('refreshToken', refresh);
 
-      localStorage.setItem('accessToken', access);
-      localStorage.setItem('refreshToken', refresh);
-
-      setAccessToken(access);
-      setUser(userData);
-      setIsAuthenticated(true);
-      return userData;
-    } catch (error) {
-      setIsAuthenticated(false);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
+    setUser(user);
+    setAccessToken(access);
+    setIsAuthenticated(true);
   };
 
-  const register = async (name, email, password) => {
-    setIsLoading(true);
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/register/`, {
-        name,
-        email,
-        password,
-      });
-      
-      const { access, refresh, user: userData } = response.data;
-
-      localStorage.setItem('accessToken', access);
-      localStorage.setItem('refreshToken', refresh);
-
-      setAccessToken(access);
-      setUser(userData);
-      setIsAuthenticated(true);
-      return userData;
-    } catch (error) {
-      setIsAuthenticated(false);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  // JWT is stateless so logout just means discarding the tokens —
+  // no API call needed. The access token will expire on its own
   const logout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    setAccessToken(null);
     setUser(null);
+    setAccessToken(null);
     setIsAuthenticated(false);
-    window.location.href = '/login';
   };
 
-  const value = {
-    user,
-    accessToken,
-    isAuthenticated,
-    isLoading,
-    login,
-    logout,
-    register
+  // Called from RegisterPage — does not log the user in automatically
+  // because email verification is required first
+  const register = async (name, email, password, confirmPassword) => {
+    await registerUser(name, email, password, confirmPassword);
   };
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{
+      user,
+      accessToken,
+      isAuthenticated,
+      isLoading,
+      login,
+      logout,
+      register,
+    }}>
       {children}
     </AuthContext.Provider>
   );
 }
-
-export default AuthProvider;

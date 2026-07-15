@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
-import DashboardLayout from './Layout/DashboardLayout';
+import DashboardLayout from './layout/DashboardLayout';
 
 // Authentic Page Component Imports
 import LoginPage from './pages/Auth/LoginPage';
