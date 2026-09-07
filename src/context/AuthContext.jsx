@@ -1,9 +1,14 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useEffect } from 'react';
-import { loginUser, registerUser, fetchMe } from '../api/auth';
+import {
+  loginUser,
+  registerUser,
+  fetchMe,
+  verifyEmail as verifyEmailRequest,
+} from '../api/auth';
 
 // Central auth context — wraps the whole app so any component can
-// access the logged-in user without passing props down manually
+// access the logged-in user without passing props down manually.
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -12,34 +17,30 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Starts true so ProtectedRoute waits for the token check before
-  // deciding to redirect. Prevents logged-in users being kicked to /login on refresh
+  // deciding to redirect. Prevents logged-in users being kicked to /login on refresh.
   const [isLoading, setIsLoading] = useState(true);
 
   // Runs once on app load — checks if a token is already saved in the
-  // browser and verifies it with the backend before rendering any pages
+  // browser and verifies it with the backend before rendering any pages.
   useEffect(() => {
     const rehydrate = async () => {
       const storedToken = localStorage.getItem('accessToken');
 
-      // No token saved means the user has never logged in or already logged out
       if (!storedToken) {
         setIsLoading(false);
         return;
       }
 
       try {
-        // Verify the stored token is still valid by calling /auth/me/
-        // The Axios interceptor attaches the token automatically
+        // The Axios interceptor attaches the token automatically.
         const response = await fetchMe();
         setUser(response.data);
         setAccessToken(storedToken);
         setIsAuthenticated(true);
       } catch {
-        // Token is expired or invalid — clear everything and start fresh
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
       } finally {
-        // Always set loading to false when the check is done, success or fail
         setIsLoading(false);
       }
     };
@@ -47,22 +48,23 @@ export function AuthProvider({ children }) {
     rehydrate();
   }, []);
 
-  // Called from LoginPage — saves tokens to localStorage so they
-  // survive a page refresh, then updates the context state
-  const login = async (email, password) => {
-    const response = await loginUser(email, password);
-    const { user, access, refresh } = response.data;
-
+  // Persists a { user, access, refresh } payload from the backend and
+  // flips the app into the authenticated state. Shared by login and
+  // email verification (which also signs the user in).
+  const applySession = ({ user: nextUser, access, refresh }) => {
     localStorage.setItem('accessToken', access);
     localStorage.setItem('refreshToken', refresh);
-
-    setUser(user);
+    setUser(nextUser);
     setAccessToken(access);
     setIsAuthenticated(true);
   };
 
-  // JWT is stateless so logout just means discarding the tokens —
-  // no API call needed. The access token will expire on its own
+  const login = async (email, password) => {
+    const response = await loginUser(email, password);
+    applySession(response.data);
+  };
+
+  // JWT is stateless so logout just means discarding the tokens.
   const logout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -71,22 +73,30 @@ export function AuthProvider({ children }) {
     setIsAuthenticated(false);
   };
 
-  // Called from RegisterPage — does not log the user in automatically
-  // because email verification is required first
-  const register = async (name, email, password, confirmPassword) => {
-    await registerUser(name, email, password, confirmPassword);
+  // Does not sign the user in — email verification is required first.
+  // Returns the response so the caller can show a "check your email" state.
+  const register = (name, email, password, confirmPassword) =>
+    registerUser(name, email, password, confirmPassword);
+
+  // Confirms the emailed link and signs the user in with the returned tokens.
+  const verifyEmail = async (token) => {
+    const response = await verifyEmailRequest(token);
+    applySession(response.data);
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      accessToken,
-      isAuthenticated,
-      isLoading,
-      login,
-      logout,
-      register,
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        accessToken,
+        isAuthenticated,
+        isLoading,
+        login,
+        logout,
+        register,
+        verifyEmail,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

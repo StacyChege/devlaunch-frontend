@@ -5,6 +5,9 @@ import DashboardLayout from './layout/DashboardLayout';
 // Authentic Page Component Imports
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
+import VerifyEmailPage from './pages/Auth/VerifyEmailPage';
+import ForgotPasswordPage from './pages/Auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/Auth/ResetPasswordPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import PlaceholderPage from './pages/Placeholder';
 import NotFoundPage from './pages/NotFoundPage';
@@ -31,6 +34,9 @@ export default function App() {
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/" element={<LandingPage />} />
 
         <Route
