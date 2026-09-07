@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './layout/DashboardLayout';
+import AdminLayout from './layout/AdminLayout';
 
 // Authentic Page Component Imports
 import LoginPage from './pages/Auth/LoginPage';
@@ -14,6 +15,9 @@ import NotFoundPage from './pages/NotFoundPage';
 import TemplatesPage from './pages/Templates/TemplatesPage';
 import ProjectsPage from './pages/Projects/ProjectsPage';
 import ProjectEditorPage from './pages/ProjectEditor/ProjectEditorPage';
+import AdminOverviewPage from './pages/Admin/AdminOverviewPage';
+import AdminUsersPage from './pages/Admin/AdminUsersPage';
+import AdminTemplatesPage from './pages/Admin/AdminTemplatesPage';
 import LandingPage from './pages/LandingPage';
 
 
@@ -25,6 +29,14 @@ function ProtectedLayout({ children, requiredRole }) {
       <DashboardLayout>
         {children}
       </DashboardLayout>
+    </ProtectedRoute>
+  );
+}
+
+function AdminProtected({ children }) {
+  return (
+    <ProtectedRoute requiredRole="ADMIN">
+      <AdminLayout>{children}</AdminLayout>
     </ProtectedRoute>
   );
 }
@@ -104,14 +116,9 @@ export default function App() {
           }
         />
 
-        <Route
-          path="/admin"
-          element={
-            <ProtectedLayout requiredRole="ADMIN">
-              <PlaceholderPage title="Admin Panel" />
-            </ProtectedLayout>
-          }
-        />
+        <Route path="/admin" element={<AdminProtected><AdminOverviewPage /></AdminProtected>} />
+        <Route path="/admin/users" element={<AdminProtected><AdminUsersPage /></AdminProtected>} />
+        <Route path="/admin/templates" element={<AdminProtected><AdminTemplatesPage /></AdminProtected>} />
 
         <Route path="*" element={<NotFoundPage />} />
 
