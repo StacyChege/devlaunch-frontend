@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 import { getProject, updateProject, uploadProjectLogo } from '../../api/projects';
-import { useProject } from '../context/ProjectContext';
+import { useProject } from '../../context/ProjectContext';
 
-export function ProjectEditorPage() {
+export default function ProjectEditorPage() {
   const { id } = useParams();
   const { setCurrentProjectName } = useProject();
   const iframeRef = useRef(null);
@@ -52,7 +53,7 @@ export function ProjectEditorPage() {
     loadProject();
 
     return () => setCurrentProjectName(null);
-  }, [id]);
+  }, [id, setCurrentProjectName]);
 
   const handleFieldChange = useCallback((field, value) => {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -131,11 +132,16 @@ export function ProjectEditorPage() {
     return (
       <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center">
         <p className="text-red-600 font-medium">{error}</p>
+        <Link to="/projects" className="text-sm text-blue-600 hover:underline mt-3 inline-block">
+          Back to projects
+        </Link>
       </div>
     );
   }
 
-  const previewUrl = project?.preview_url;
+  // Only deployed projects have something live to show; drafts fall back
+  // to the empty state until a real preview/build pipeline exists.
+  const previewUrl = project?.live_url;
 
   return (
     <div className="flex gap-0 h-[calc(100vh-73px)] -m-6 overflow-hidden">

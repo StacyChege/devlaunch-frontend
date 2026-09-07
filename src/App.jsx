@@ -11,7 +11,9 @@ import ResetPasswordPage from './pages/Auth/ResetPasswordPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import PlaceholderPage from './pages/Placeholder';
 import NotFoundPage from './pages/NotFoundPage';
-import TemplatesPage  from './pages/Templates/TemplatesPage';
+import TemplatesPage from './pages/Templates/TemplatesPage';
+import ProjectsPage from './pages/Projects/ProjectsPage';
+import ProjectEditorPage from './pages/ProjectEditor/ProjectEditorPage';
 import LandingPage from './pages/LandingPage';
 
 
@@ -61,7 +63,7 @@ export default function App() {
           path="/projects"
           element={
             <ProtectedLayout>
-              <PlaceholderPage title="My Projects" />
+              <ProjectsPage />
             </ProtectedLayout>
           }
         />
@@ -70,7 +72,7 @@ export default function App() {
           path="/projects/:id"
           element={
             <ProtectedLayout>
-              <PlaceholderPage title="Project Editor" />
+              <ProjectEditorPage />
             </ProtectedLayout>
           }
         />
