@@ -84,6 +84,10 @@ export function AuthProvider({ children }) {
     applySession(response.data);
   };
 
+  // Merge a fresh user payload (e.g. after a profile edit) into context
+  // so the sidebar/topbar update without a page reload.
+  const updateUser = (nextUser) => setUser(nextUser);
+
   return (
     <AuthContext.Provider
       value={{
@@ -95,6 +99,7 @@ export function AuthProvider({ children }) {
         logout,
         register,
         verifyEmail,
+        updateUser,
       }}
     >
       {children}

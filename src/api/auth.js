@@ -17,6 +17,15 @@ export const loginUser = (email, password) =>
 // Called on app load to verify a stored token is still valid.
 export const fetchMe = () => axiosInstance.get('/auth/me/');
 
+export const updateProfile = (fullName) =>
+  axiosInstance.patch('/auth/me/', { full_name: fullName });
+
+export const changePassword = (currentPassword, newPassword) =>
+  axiosInstance.post('/auth/change-password/', {
+    current_password: currentPassword,
+    new_password: newPassword,
+  });
+
 // Confirms the address from the emailed link. Returns auth tokens on success,
 // so the user lands on the dashboard already signed in.
 export const verifyEmail = (token) =>

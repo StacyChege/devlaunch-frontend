@@ -18,6 +18,7 @@ import ProjectEditorPage from './pages/ProjectEditor/ProjectEditorPage';
 import AdminOverviewPage from './pages/Admin/AdminOverviewPage';
 import AdminUsersPage from './pages/Admin/AdminUsersPage';
 import AdminTemplatesPage from './pages/Admin/AdminTemplatesPage';
+import SettingsPage from './pages/Settings/SettingsPage';
 import LandingPage from './pages/LandingPage';
 
 
@@ -111,7 +112,7 @@ export default function App() {
           path="/settings"
           element={
             <ProtectedLayout>
-              <PlaceholderPage title="Settings" />
+              <SettingsPage />
             </ProtectedLayout>
           }
         />
