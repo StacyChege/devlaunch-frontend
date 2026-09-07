@@ -1,7 +1,3 @@
-import { useState} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createProject } from '../api/projects';
-
 const CATEGORY_COLORS = {
   PORTFOLIO: 'bg-blue-100 text-blue-700',
   BUSINESS: 'bg-green-100 text-green-700',
@@ -12,29 +8,11 @@ const CATEGORY_COLORS = {
   DOCS: 'bg-gray-100 text-gray-700',
 };
 
-export default function TemplateCard({ template }) {
-    const navigate = useNavigate();
-    const [isCreating, setIsCreating] = useState(false);
-    const [error, setError] = useState(null);
-    
-    // Core handler logic for creating a new project based on the selected template. It manages the loading state and error handling, ensuring a smooth user experience during the project creation process.
-    const handleUseTemplate = async () => {
-        setIsCreating(true);
-        setError(null);
-        try {
-            const response = await createProject(template.id);
-            // Navigate to the newly created project's page upon successful creation.
-            navigate(`/projects/${response.data.id}`);
-        } catch (err) {
-          console.error(err);
-          setError('Failed to create project. Please try again.');
-        } finally {
-            setIsCreating(false);
-        }
-    };
-
-    return (
-        <div className="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow duration-200">
+// Presentational card. Project creation + preview are owned by TemplatesPage
+// so the same actions work from the preview modal.
+export default function TemplateCard({ template, onPreview, onUse, isCreating }) {
+  return (
+    <div className="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow duration-200">
 
       <div className="relative overflow-hidden bg-gray-100 aspect-video">
         {template.thumbnail_url ? (
@@ -52,27 +30,22 @@ export default function TemplateCard({ template }) {
           </div>
         )}
 
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-200 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100">
-          {template.preview_url && (
-            <a
-              href={template.preview_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white text-gray-800 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              Preview
-            </a>
-          )}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-200 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100">
           <button
-            onClick={handleUseTemplate}
+            onClick={() => onPreview(template)}
+            className="bg-white text-gray-800 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            Preview
+          </button>
+          <button
+            onClick={() => onUse(template)}
             disabled={isCreating}
             className="bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-60 transition-colors flex items-center gap-2"
           >
             {isCreating ? (
               <>
                 <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Creating...
+                Creating…
               </>
             ) : (
               'Use Template'
@@ -80,8 +53,7 @@ export default function TemplateCard({ template }) {
           </button>
         </div>
       </div>
-      
-      {/* Meta Properties Details Section */}
+
       <div className="p-4 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-2 mb-2">
           <h3 className="text-sm font-semibold text-gray-800 leading-tight">
@@ -95,8 +67,7 @@ export default function TemplateCard({ template }) {
             {template.is_premium ? 'Premium' : 'Free'}
           </span>
         </div>
-        
-        {/* 'line-clamp-2' class limits the description to two lines */}
+
         <p className="text-xs text-gray-500 mb-3 line-clamp-2 flex-1">
           {template.description}
         </p>
@@ -111,10 +82,6 @@ export default function TemplateCard({ template }) {
             {template.tech_stack}
           </span>
         </div>
-
-        {error && (
-          <p className="text-xs text-red-500 mt-2">{error}</p>
-        )}
       </div>
 
     </div>
